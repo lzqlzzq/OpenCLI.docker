@@ -1,0 +1,48 @@
+services:
+  chrome:
+    build:
+      context: "${BUILD_CONTEXT:-.}"
+      dockerfile: "${DOCKERFILE_PATH:-Dockerfile}"
+      args:
+        BASE_IMAGE: "${BASE_IMAGE:-lscr.io/linuxserver/chrome:latest}"
+        OPENCLI_EXTENSION_VERSION: "${OPENCLI_EXTENSION_VERSION:-v1.7.0}"
+        OPENCLI_EXTENSION_URL: "${OPENCLI_EXTENSION_URL:-}"
+        OPENCLI_EXTENSION_DIR: "${OPENCLI_EXTENSION_DIR:-/opt/opencli-extension}"
+        OPENCLI_EXTENSION_CRX: "${OPENCLI_EXTENSION_CRX:-/opt/opencli-extension.crx}"
+        OPENCLI_EXTENSION_PREFS_DIR: "${OPENCLI_EXTENSION_PREFS_DIR:-/usr/share/google-chrome/extensions}"
+        NODEJS_VERSION: "${NODEJS_VERSION:-lts 24}"
+        N_PREFIX: "${N_PREFIX:-/root/n}"
+        OPENCLI_NPM_PACKAGE: "${OPENCLI_NPM_PACKAGE:-@jackwener/opencli}"
+    image: "${IMAGE_NAME:-opencli-chrome:local}"
+    container_name: "${CONTAINER_NAME:-opencli-chrome}"
+    environment:
+      PUID: "${PUID:-1000}"
+      PGID: "${PGID:-1000}"
+      TZ: "${TZ:-Asia/Shanghai}"
+      CUSTOM_USER: "${CHROME_USER:-abc}"
+      PASSWORD: "${CHROME_PASSWORD:-CHANGE_ME}"
+      CUSTOM_PORT: "${CHROME_HTTP_PORT:-3000}"
+      CUSTOM_HTTPS_PORT: "${CHROME_HTTPS_PORT:-3001}"
+      CUSTOM_WS_PORT: "${CHROME_WS_PORT:-8082}"
+      CHROME_PROXY_SERVER: "${CHROME_PROXY_SERVER:-}"
+      CHROME_PROXY_BYPASS_LIST: "${CHROME_PROXY_BYPASS_LIST:-}"
+      CHROME_REMOTE_DEBUGGING_ADDRESS: "${CHROME_REMOTE_DEBUGGING_ADDRESS:-0.0.0.0}"
+      CHROME_REMOTE_DEBUGGING_PORT: "${CHROME_REMOTE_DEBUGGING_PORT:-9222}"
+      CHROME_REMOTE_DEBUGGING_USER_DATA_DIR: "${CHROME_REMOTE_DEBUGGING_USER_DATA_DIR:-/config/chrome-cdt-profile}"
+      CHROME_CLI: >-
+        --no-first-run
+        --no-default-browser-check
+        --user-data-dir=${CHROME_REMOTE_DEBUGGING_USER_DATA_DIR:-/config/chrome-cdt-profile}
+        --remote-debugging-address=${CHROME_REMOTE_DEBUGGING_ADDRESS:-0.0.0.0}
+        --remote-debugging-port=${CHROME_REMOTE_DEBUGGING_PORT:-9222}
+        ${CHROME_START_PAGE:-about:blank}
+        ${CHROME_EXTRA_FLAGS:-}
+    volumes:
+      - "${CONFIG_DIR:-./config}:/config"
+      - "./labwc-autostart.sh:/config/.config/labwc/autostart:ro"
+    ports:
+      - "${HOST_BIND_IP:-127.0.0.1}:${CHROME_HTTP_PORT:-3000}:${CHROME_HTTP_PORT:-3000}"
+      - "${HOST_BIND_IP:-127.0.0.1}:${CHROME_HTTPS_PORT:-3001}:${CHROME_HTTPS_PORT:-3001}"
+      - "${HOST_BIND_IP:-127.0.0.1}:${CHROME_DEBUG_PORT:-9222}:${CHROME_REMOTE_DEBUGGING_PORT:-9222}"
+    shm_size: "${SHM_SIZE:-1gb}"
+    restart: "${RESTART_POLICY:-unless-stopped}"
