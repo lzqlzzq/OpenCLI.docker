@@ -16,7 +16,7 @@ ENV N_PREFIX=${N_PREFIX}
 ENV PATH=${N_PREFIX}/bin:${PATH}
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends ca-certificates unzip curl openssl \
+    && apt-get install -y --no-install-recommends ca-certificates unzip curl openssl socat \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Node.js and OpenCLI.
