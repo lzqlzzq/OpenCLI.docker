@@ -83,6 +83,41 @@ Example SOCKS5 proxy:
 CHROME_PROXY_SERVER=socks5://host.docker.internal:1080
 ```
 
+## Selkies Stream Tuning
+
+The compose file passes Selkies video settings through environment variables so each host can tune for its own CPU, GPU, and network conditions. The defaults in `.env.example` favor remote-server usability over visual quality:
+
+```dotenv
+SELKIES_FRAMERATE=20
+SELKIES_ENABLE_RATE_CONTROL=true
+SELKIES_RATE_CONTROL_MODE=cbr
+SELKIES_VIDEO_BITRATE=2
+SELKIES_IS_MANUAL_RESOLUTION_MODE=true
+SELKIES_MANUAL_WIDTH=1280
+SELKIES_MANUAL_HEIGHT=720
+SELKIES_USE_CSS_SCALING=true
+SELKIES_JPEG_QUALITY=60
+SELKIES_H264_CRF=30
+SELKIES_H264_PAINTOVER_CRF=30
+```
+
+For a stronger server or LAN-only deployment, raise the resolution, framerate, and bitrate in `.env` before recreating the container. For example:
+
+```dotenv
+SELKIES_FRAMERATE=30
+SELKIES_VIDEO_BITRATE=6
+SELKIES_MANUAL_WIDTH=1920
+SELKIES_MANUAL_HEIGHT=1080
+SELKIES_H264_CRF=25
+SELKIES_H264_PAINTOVER_CRF=22
+```
+
+Apply changes with:
+
+```bash
+docker compose up -d --force-recreate chrome
+```
+
 See [.env.example](/home/lzq/Documents/OpenCLI.docker/.env.example:1) for the full list.
 
 ## Published Ports
